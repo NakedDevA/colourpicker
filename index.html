@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HSL Color Picker</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 500px; 
+            margin: 20px auto; 
+            padding: 20px;
+        }
+        #colorPreview {
+            width: 100%; 
+            height: 200px; 
+            margin-bottom: 20px;
+        }
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 20px;
+        }
+        input[type="range"]::-moz-range-track {
+            height: 20px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="colorPreview"></div>
+
+    <div class="slider-container">
+        <label>Hue</label>
+        <input type="range" id="hueSlider" min="0" max="360" value="180">
+        <input type="number" id="hueInput" min="0" max="360" value="180">
+    </div>
+
+    <div class="slider-container">
+        <label>Saturation</label>
+        <input type="range" id="satSlider" min="0" max="100" value="50">
+        <input type="number" id="satInput" min="0" max="100" value="50">
+    </div>
+
+    <div class="slider-container">
+        <label>Luminosity</label>
+        <input type="range" id="lumSlider" min="0" max="100" value="50">
+        <input type="number" id="lumInput" min="0" max="100" value="50">
+    </div>
+
+    <div class="actions">
+        <button id="randomBtn">Random</button>
+        <button id="copyBtn">Copy HSL</button>
+        <button id="updateUrlBtn">Update URL</button>
+    </div>
+
+    <div id="colorText"></div>
+
+    <script>
+        const elements = {
+            preview: document.getElementById('colorPreview'),
+            hueSlider: document.getElementById('hueSlider'),
+            hueInput: document.getElementById('hueInput'),
+            satSlider: document.getElementById('satSlider'),
+            satInput: document.getElementById('satInput'),
+            lumSlider: document.getElementById('lumSlider'),
+            lumInput: document.getElementById('lumInput'),
+            randomBtn: document.getElementById('randomBtn'),
+            copyBtn: document.getElementById('copyBtn'),
+            updateUrlBtn: document.getElementById('updateUrlBtn'),
+            colorText: document.getElementById('colorText')
+        };
+
+        function updateColor() {
+            const h = +elements.hueSlider.value;
+            const s = +elements.satSlider.value;
+            const l = +elements.lumSlider.value;
+            const colorString = `hsl(${h}, ${s}%, ${l}%)`;
+
+            elements.preview.style.backgroundColor = colorString;
+            elements.colorText.textContent = `HSL: ${colorString}`;
+
+            // Update track styles
+            elements.hueSlider.style.background = `linear-gradient(to right, 
+                red, yellow, green, cyan, blue, magenta, red)`;
+            
+            elements.satSlider.style.background = `linear-gradient(to right, 
+                hsl(${h}, 0%, ${l}%), 
+                hsl(${h}, 100%, ${l}%))`;
+            
+            elements.lumSlider.style.background = `linear-gradient(to right, 
+                hsl(${h}, ${s}%, 0%), 
+                hsl(${h}, ${s}%, 50%), 
+                hsl(${h}, ${s}%, 100%))`;
+        }
+
+        function setupEventListeners() {
+            // Sliders and inputs synchronization
+            [
+                [elements.hueSlider, elements.hueInput],
+                [elements.satSlider, elements.satInput],
+                [elements.lumSlider, elements.lumInput]
+            ].forEach(([slider, input]) => {
+                slider.addEventListener('input', () => {
+                    input.value = slider.value;
+                    updateColor();
+                });
+
+                input.addEventListener('change', () => {
+                    slider.value = input.value;
+                    updateColor();
+                });
+            });
+
+            // Random button
+            elements.randomBtn.addEventListener('click', () => {
+                elements.hueSlider.value = Math.floor(Math.random() * 361);
+                elements.satSlider.value = Math.floor(Math.random() * 101);
+                elements.lumSlider.value = Math.floor(Math.random() * 101);
+                
+                elements.hueInput.value = elements.hueSlider.value;
+                elements.satInput.value = elements.satSlider.value;
+                elements.lumInput.value = elements.lumSlider.value;
+                
+                updateColor();
+            });
+
+            // Copy button
+            elements.copyBtn.addEventListener('click', () => {
+                const colorString = `hsl(${elements.hueSlider.value}, ${elements.satSlider.value}%, ${elements.lumSlider.value}%)`;
+                navigator.clipboard.writeText(colorString);
+            });
+
+            // Update URL button
+            elements.updateUrlBtn.addEventListener('click', () => {
+                const h = elements.hueSlider.value;
+                const s = elements.satSlider.value;
+                const l = elements.lumSlider.value;
+                history.pushState({}, '', `/${h}/${s}/${l}`);
+            });
+        }
+
+        function initFromURL() {
+            const path = window.location.pathname.split('/').filter(Boolean);
+            if (path.length === 3) {
+                const [h, s, l] = path.map(Number);
+                if (!isNaN(h) && !isNaN(s) && !isNaN(l)) {
+                    elements.hueSlider.value = h;
+                    elements.hueInput.value = h;
+                    elements.satSlider.value = s;
+                    elements.satInput.value = s;
+                    elements.lumSlider.value = l;
+                    elements.lumInput.value = l;
+                }
+            }
+            updateColor();
+        }
+
+        // Initialize
+        setupEventListeners();
+        initFromURL();
+        updateColor();
+    </script>
+</body>
+</html>
