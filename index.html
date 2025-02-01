@@ -126,10 +126,9 @@
 
     <div class="actions">
       <button id="randomBtn">Random</button>
-      <button id="copyBtn">Copy HSL</button>
+      <button id="copyBtn">Copy Link</button>
     </div>
 
-    <div id="colorText"></div>
 
     <div id="truckExample">
       <div class="image-overlap-wrapper" id="colorableTruckWrapper">
@@ -152,7 +151,6 @@
         lumInput: document.getElementById("lumInput"),
         randomBtn: document.getElementById("randomBtn"),
         copyBtn: document.getElementById("copyBtn"),
-        colorText: document.getElementById("colorText"),
       }
 
       function updateColor() {
@@ -162,7 +160,6 @@
         const colorString = `hsl(${h}, ${s}%, ${l}%)`
 
         elements.preview.style.backgroundColor = colorString
-        elements.colorText.textContent = `HSL: ${colorString}`
 
         elements.truckPreview.style.backgroundColor = colorString
 
@@ -208,10 +205,9 @@
           updateHashURL()
         })
 
-        // Copy button
+        // Copy Link button
         elements.copyBtn.addEventListener("click", () => {
-          const colorString = `hsl(${elements.hueSlider.value}, ${elements.satSlider.value}%, ${elements.lumSlider.value}%)`
-          navigator.clipboard.writeText(colorString)
+          navigator.clipboard.writeText(location.href)
         })
       }
 
