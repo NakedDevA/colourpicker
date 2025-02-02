@@ -37,7 +37,16 @@
       }
 
       #hueSlider::-webkit-slider-runnable-track {
-        background: linear-gradient(to right, red, yellow, green, cyan, blue, magenta, red);
+        background: linear-gradient(
+          to right,
+          hsl(0, var(--s, 50%), var(--l, 50%)),
+          hsl(60, var(--s, 50%), var(--l, 50%)),
+          hsl(120, var(--s, 50%), var(--l, 50%)),
+          hsl(180, var(--s, 50%), var(--l, 50%)),
+          hsl(240, var(--s, 50%), var(--l, 50%)),
+          hsl(300, var(--s, 50%), var(--l, 50%)),
+          hsl(0, var(--s, 50%), var(--l, 50%))
+        );
       }
       #hueSlider::-moz-range-track {
         background: linear-gradient(to right, red, yellow, green, cyan, blue, magenta, red);
@@ -129,7 +138,6 @@
       <button id="copyBtn">Copy Link</button>
     </div>
 
-
     <div id="truckExample">
       <div class="image-overlap-wrapper" id="colorableTruckWrapper">
         <img src="sampler.png" />
@@ -164,6 +172,9 @@
         elements.truckPreview.style.backgroundColor = colorString
 
         // Update track styles
+        hueSlider.style.setProperty("--s", `${s}%`)
+        hueSlider.style.setProperty("--l", `${l}%`)
+
         satSlider.style.setProperty("--h", h)
         satSlider.style.setProperty("--l", `${l}%`)
 
